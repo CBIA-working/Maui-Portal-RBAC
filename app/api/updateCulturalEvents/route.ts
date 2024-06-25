@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import withAuth from "@/lib/withAuth";
 
-export async function PATCH(req: NextRequest, res: NextResponse) {
+async function PATCH(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const { id, eventName, description, date, signedUp } = body;
 
