@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Test {
+  id     Int    @id @default(autoincrement())
+  stream String
+}
+
+model PageData {
+  title       String
+  description String
+  page        String @id @unique
+}
+
+model CulturalEvent {
+  id          Int      @id @default(autoincrement())
+  eventName   String
+  date        DateTime
+  description String
+  signedUp    Boolean
+}
+
+model Question {
+  id            Int      @id @default(autoincrement())
+  StudentId     Int
+  QuestionAsked String
+  Date          DateTime
+  Answer        String?
+  Solved        Boolean
+}
+
+model GoingAwayForm {
+  id               Int      @id @default(autoincrement())
+  Name             String
+  Location         String
+  DepartureDate    DateTime
+  ReturnDate       DateTime
+  GoingFormFilled  Boolean
+  FullName         String
+  StudentId        String
+  PhoneNumber      String
+  Purpose          String
+}
+
+model User {
+  id                       Int      @id @default(autoincrement())
+  fname                    String
+  lname                    String
+  email                    String   @unique
+  password                 String
+  dob                      String
+  address                  String
+  gender                   String
+  bloodGroup               String
+  dietaryPreference        String
+  emergencyContactName     String
+  emergencyContactNumber   String
+  emergencyContactRelation String
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     Int
+  email     String
+  expires   DateTime
+  createdAt DateTime @default(now())
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String
+  permissions Permission[]
+  users       AdminUser[]  @relation("UserRoles")
+}
+
+model Permission {
+  id       Int     @id @default(autoincrement())
+  action   String
+  subject  String
+  roleId   Int
+  role     Role    @relation(fields: [roleId], references: [id])
+}
+
+model AdminUser {
+  id        Int    @id @default(autoincrement())
+  fname     String
+  lname     String
+  email     String   @unique
+  password  String
+  roles     Role[]  @relation("UserRoles")
+}
