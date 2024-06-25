@@ -36,23 +36,23 @@ model Question {
 }
 
 model GoingAwayForm {
-  id               Int      @id @default(autoincrement())
-  Name             String
-  Location         String
-  DepartureDate    DateTime
-  ReturnDate       DateTime
-  GoingFormFilled  Boolean
-  FullName         String
-  StudentId        String
-  PhoneNumber      String
-  Purpose          String
+  id              Int      @id @default(autoincrement())
+  Name            String
+  Location        String
+  DepartureDate   DateTime
+  ReturnDate      DateTime
+  GoingFormFilled Boolean
+  FullName        String
+  StudentId       String
+  PhoneNumber     String
+  Purpose         String
 }
 
 model User {
-  id                       Int      @id @default(autoincrement())
+  id                       Int    @id @default(autoincrement())
   fname                    String
   lname                    String
-  email                    String   @unique
+  email                    String @unique
   password                 String
   dob                      String
   address                  String
@@ -86,18 +86,26 @@ model Role {
 }
 
 model Permission {
-  id       Int     @id @default(autoincrement())
-  action   String
-  subject  String
-  roleId   Int
-  role     Role    @relation(fields: [roleId], references: [id])
+  id      Int    @id @default(autoincrement())
+  action  String
+  subject String
+  roleId  Int
+  role    Role   @relation(fields: [roleId], references: [id])
 }
 
 model AdminUser {
-  id        Int    @id @default(autoincrement())
-  fname     String
-  lname     String
-  email     String   @unique
-  password  String
-  roles     Role[]  @relation("UserRoles")
+  id       Int    @id @default(autoincrement())
+  fname    String
+  lname    String
+  email    String @unique
+  password String
+  roles    Role[] @relation("UserRoles")
+}
+
+model File {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pageId    String?  @db.Text
+  file      String?  @db.Text
 }
