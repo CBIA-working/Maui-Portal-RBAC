@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         ""
       )}-${uniqueSuffix}.${mime.getExtension(image.type)}`;
       await writeFile(`${uploadDir}/${filename}`, buffer);
-      const fileUrl = `${relativeUploadDir}/${filename}`;
+      const fileUrl = `http://localhost:3000${relativeUploadDir}/${filename}`;
   
       // Save to database
       const result = await prisma.file.create({
