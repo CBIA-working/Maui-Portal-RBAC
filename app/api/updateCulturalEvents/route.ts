@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 import withAuth from "@/lib/withAuth";
 
-async function PATCH(req: NextRequest, res: NextResponse) {
+export async function PATCH(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const { id, eventName, description, date, signedUp } = body;
 
@@ -48,4 +48,4 @@ async function PATCH(req: NextRequest, res: NextResponse) {
   }
 }
 
-export default withAuth(PATCH, 'update', 'UpdateCulturalEvents');
+// export default withAuth(PATCH, 'update', 'UpdateCulturalEvents');
