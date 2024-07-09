@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Course" ALTER COLUMN "keyDates" SET DATA TYPE TEXT;

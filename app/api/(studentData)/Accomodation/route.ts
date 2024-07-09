@@ -1,24 +1,17 @@
-import withAuth from "@/lib/withAuth";
 import { NextResponse, NextRequest } from "next/server";
+import prisma from "@/lib/prisma";
+import withAuth from "@/lib/withAuth";
 
-// export async function GET() {
-async function handler(req: Request) {
-  const jsonData = [{
-    RoomNumber: "101",
-    BuildingName: "Main Building",
-    Floor: "1st Floor",
-    IsSingleOccupancy: false,
-    NumberOfRoommates: 2,
-    RoommateNames: "Jack Kline, Jane Smith",
-  },{
-    RoomNumber: "102",
-    BuildingName: "Not Main Building",
-    Floor: "Not 1st Floor",
-    IsSingleOccupancy: false,
-    NumberOfRoommates: 1,
-    RoommateNames: "Jack Kline",
-  }];
+export async function POST(req: NextRequest, res: NextResponse) {
+  // Parse the request body
+  const body = await req.json();
+  const { userId } = body;
 
-  return NextResponse.json(jsonData);
+  const getMessages = await prisma.viewAccomodation.findMany({
+    where: {
+      userId: userId
+    }
+  });
+  const response = await getMessages;
+  return NextResponse.json(response);
 }
-export const GET = withAuth(handler, 'read', 'ViewAccomodation');

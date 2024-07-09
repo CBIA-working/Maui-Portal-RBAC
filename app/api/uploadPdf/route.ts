@@ -59,14 +59,21 @@ export async function POST(req: NextRequest) {
       await writeFile(`${uploadDir}/${filename}`, buffer);
       const fileUrl = `${relativeUploadDir}/${filename}`;
 
+      
+      // Example userId; replace with actual logic to get userId
+      const userId = 1; 
+
       const result = await prisma.file.create({
         data: {
           pageId: "1", // Assuming you have a valid pageId
           file: fileUrl,
-        },
+          user: {
+            connect: { id: userId } // Connect to an existing user
+          }
+        }
       });
 
-      return NextResponse.json({ user: result });
+      return NextResponse.json({ file: result });
     } catch (e) {
       console.error("Error while trying to upload a file\n", e);
       return NextResponse.json(
