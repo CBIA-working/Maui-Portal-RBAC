@@ -1,40 +1,32 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import withAuth from "@/lib/withAuth";
-import { headers } from "next/headers";
-import { number } from "zod";
 
-// export async function POST(req: NextRequest, res: NextResponse) {
-//   // // Parse the request body
-//   // const body = await req.json();
-//   // const { userId } = body;
+export async function GET(req: NextRequest) {
+  try {
+    const eventId = req.headers.get("eventId");
 
-//   const getMessages = await prisma.culturalEvent.findMany(
-//   //   {
-//   //   where: {
-//   //     userId: userId
-//   //   }
-//   // }
-// );
-//   const response = await getMessages;
-//   return NextResponse.json(response);
-// }
-export async function GET(req: NextRequest, res: NextResponse) {
-  const eventId = req.headers.get("eventId");
-  if ( !eventId) {
-    const getMessages = await prisma.culturalEvent.findMany();
-    const response = await getMessages;
-    return NextResponse.json(response);
-  }
-  const getMessages = await prisma.culturalEvent.findUnique(
-    {
-      where:{
-        id:Number(eventId)
-      }
+    if (!eventId) {
+      const getMessages = await prisma.culturalEvent.findMany({
+        orderBy: {
+          id: 'asc', // Ensure the events are ordered by ID in ascending order
+        },
+      });
+      return NextResponse.json(getMessages);
     }
-  );
-    const response = await getMessages;
-    return NextResponse.json(response);
-}
 
-// export const GET = withAuth(handler, 'read', 'CulturalEvent');
+    const getMessage = await prisma.culturalEvent.findUnique({
+      where: {
+        id: Number(eventId),
+      },
+    });
+
+    if (!getMessage) {
+      return NextResponse.json({ error: 'Event not found.' }, { status: 404 });
+    }
+
+    return NextResponse.json(getMessage);
+  } catch (error) {
+    console.error('Error retrieving events:', error);
+    return NextResponse.json({ error: 'Error retrieving events.' }, { status: 500 });
+  }
+}

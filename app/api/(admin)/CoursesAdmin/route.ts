@@ -1,22 +1,31 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
+  try {
   const courseId = req.headers.get("courseId");
   if ( !courseId) {
-    const getMessages = await prisma.course.findMany();
-    const response = await getMessages;
-    return NextResponse.json(response);
+    const getMessages = await prisma.course.findMany({
+      orderBy: {
+        id: 'asc', // Ensure the courses are ordered by ID in ascending order
+      },
+    });
+    return NextResponse.json(getMessages);
   }
-  const getMessages = await prisma.course.findUnique(
+  const getMessage = await prisma.course.findUnique(
     {
       where:{
         id:Number(courseId)
       }
     }
   );
-    const response = await getMessages;
-    return NextResponse.json(response);
-}
+  if (!getMessage) {
+    return NextResponse.json({ error: 'courses not found.' }, { status: 404 });
+  }
 
-// export const GET = withAuth(handler, 'read', 'CulturalEvent');
+  return NextResponse.json(getMessage);
+} catch (error) {
+  console.error('Error retrieving courses:', error);
+  return NextResponse.json({ error: 'Error retrieving courses.' }, { status: 500 });
+}
+}
