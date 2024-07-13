@@ -27,16 +27,6 @@ export async function DELETE(req: NextRequest) {
     });
 
 
-    // Delete related CulturalEvents
-    await prisma.culturalEvent.deleteMany({
-      where: { userId: Number(id) },
-    });
-
-    await prisma.viewAccomodation.deleteMany({
-      where: { userId: Number(id) },
-    });
-
-
     // Delete the User
     const user = await prisma.user.delete({
       where: { id: Number(id) },
