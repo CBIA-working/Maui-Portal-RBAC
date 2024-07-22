@@ -1,5 +1,3 @@
-// pages/api/admin/KeyProgramDatesAdmin/route.ts
-
 import { NextResponse, NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 
@@ -17,12 +15,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid month number.' }, { status: 400 });
     }
 
+    const currentYear = new Date().getFullYear();
+
+    // Function to transform the date object to include only hh:mm
+    const transformDates = (dates: any[]) => {
+      return dates.map(date => ({
+        ...date,
+        time: date.time.slice(0, 5), // Extracting hh:mm part
+      }));
+    };
+
     // Your logic to fetch data based on the month
     const currentMonthDates = await prisma.keyProgramDate.findMany({
       where: {
         date: {
-          gte: new Date(`${new Date().getFullYear()}-${month}-01`),
-          lt: new Date(`${new Date().getFullYear()}-${month + 1}-01`),
+          gte: new Date(`${currentYear}-${month}-01`),
+          lt: new Date(`${currentYear}-${month + 1}-01`),
         },
       },
     });
@@ -31,8 +39,8 @@ export async function POST(req: NextRequest) {
     const prevMonthDates = await prisma.keyProgramDate.findMany({
       where: {
         date: {
-          gte: new Date(`${new Date().getFullYear()}-${month - 1}-01`),
-          lt: new Date(`${new Date().getFullYear()}-${month}-01`),
+          gte: new Date(`${currentYear}-${month - 1}-01`),
+          lt: new Date(`${currentYear}-${month}-01`),
         },
       },
     });
@@ -41,16 +49,16 @@ export async function POST(req: NextRequest) {
     const nextMonthDates = await prisma.keyProgramDate.findMany({
       where: {
         date: {
-          gte: new Date(`${new Date().getFullYear()}-${month + 1}-01`),
-          lt: new Date(`${new Date().getFullYear()}-${month + 2}-01`),
+          gte: new Date(`${currentYear}-${month + 1}-01`),
+          lt: new Date(`${currentYear}-${month + 2}-01`),
         },
       },
     });
 
     return NextResponse.json({
-      currentMonthDates,
-      prevMonthDates,
-      nextMonthDates,
+      currentMonthDates: transformDates(currentMonthDates),
+      prevMonthDates: transformDates(prevMonthDates),
+      nextMonthDates: transformDates(nextMonthDates),
     });
   } catch (error) {
     console.error('Error fetching data:', error);

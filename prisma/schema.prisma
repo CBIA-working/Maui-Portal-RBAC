@@ -98,6 +98,7 @@ model StudentCourse {
 model KeyProgramDate {
   id          Int      @id @default(autoincrement())
   date        DateTime
+   time        String
   name        String
   description String
   StudentKeyProgramDate StudentKeyProgramDate[]
