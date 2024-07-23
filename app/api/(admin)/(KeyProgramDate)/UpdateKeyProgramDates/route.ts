@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function updateKeyProgramDate(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const { id, date, time, name, description } = await req.json();
 
