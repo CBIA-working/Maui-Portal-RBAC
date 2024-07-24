@@ -6,11 +6,12 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id                       Int                   @id @default(autoincrement())
+  id                       Int                     @id @default(autoincrement())
   fname                    String
   lname                    String
-  email                    String                @unique
+  email                    String                  @unique
   password                 String
   dob                      String
   address                  String
@@ -21,19 +22,19 @@ model User {
   emergencyContactNumber   String
   emergencyContactRelation String
   imageUrl                 String?
-  AdminUsers               AdminUser[]        @relation("AdminUserTokenToUser")
-  File                     File[]             @relation("FileToUser")
-  GoingAwayForms           GoingAwayForm[]      @relation("GoingAwayFormToUser")
-  PasswordResetTokens      PasswordResetToken[] @relation("PasswordResetTokenToUser")
-  Questions                Question[]           @relation("QuestionToUser")
   StudentAccomodation      StudentAccomodation[]
   StudentCourse            StudentCourse[]
   StudentEvents            StudentEvents[]
   StudentKeyProgramDate    StudentKeyProgramDate[]
-  viewAccomodation         viewAccomodation[]   @relation("viewAccomodationToUser")
-  Course                   Course[]              @relation("CourseToUser")
-  CulturalEvents           CulturalEvent[]       @relation("CulturalEventToUser")
-  KeyProgramDate           KeyProgramDate[] @relation("KeyProgramDateToUser")
+  AdminUsers               AdminUser[]             @relation("AdminUserTokenToUser")
+  Course                   Course[]                @relation("CourseToUser")
+  CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
+  File                     File[]                  @relation("FileToUser")
+  GoingAwayForms           GoingAwayForm[]         @relation("GoingAwayFormToUser")
+  KeyProgramDate           KeyProgramDate[]        @relation("KeyProgramDateToUser")
+  PasswordResetTokens      PasswordResetToken[]    @relation("PasswordResetTokenToUser")
+  Questions                Question[]              @relation("QuestionToUser")
+  viewAccomodation         viewAccomodation[]      @relation("viewAccomodationToUser")
 }
 
 model CulturalEvent {
@@ -63,7 +64,7 @@ model viewAccomodation {
   numberOfRoommates   Int
   roommateNames       String
   StudentAccomodation StudentAccomodation[]
-  user                User[]  @relation("viewAccomodationToUser")
+  user                User[]                @relation("viewAccomodationToUser")
 }
 
 model StudentAccomodation {
@@ -96,21 +97,29 @@ model StudentCourse {
 }
 
 model KeyProgramDate {
-  id          Int      @id @default(autoincrement())
-  date        DateTime
-   time        String
+  id                    Int                     @id @default(autoincrement())
+  date                  DateTime
+  name                  String
+  description           String
+  time                  String
+  StudentKeyProgramDate StudentKeyProgramDate[]
+  user                  User[]                  @relation("KeyProgramDateToUser")
+}
+
+model StudentKeyProgramDate {
+  id               Int            @id @default(autoincrement())
+  studentId        Int
+  keyProgramDateId Int
+  keyProgramDate   KeyProgramDate @relation(fields: [keyProgramDateId], references: [id])
+  student          User           @relation(fields: [studentId], references: [id])
+}
+
+model FAQ {
+  id          Int    @id @default(autoincrement())
   name        String
   description String
-  StudentKeyProgramDate StudentKeyProgramDate[]
-  user          User[]          @relation("KeyProgramDateToUser")
 }
-model StudentKeyProgramDate {
-  id        Int    @id @default(autoincrement())
-  studentId Int
-  keyProgramDateId  Int
-  keyProgramDate    KeyProgramDate @relation(fields: [keyProgramDateId], references: [id])
-  student   User   @relation(fields: [studentId], references: [id])
-}
+
 model Question {
   id            Int      @id @default(autoincrement())
   StudentId     Int
@@ -118,7 +127,7 @@ model Question {
   Date          DateTime
   Answer        String?
   Solved        Boolean
-  user          User []    @relation("QuestionToUser")
+  user          User[]   @relation("QuestionToUser")
 }
 
 model GoingAwayForm {
@@ -132,15 +141,16 @@ model GoingAwayForm {
   PhoneNumber     String
   Purpose         String
   GoingFormFilled Boolean
-  user            User[]     @relation("GoingAwayFormToUser")
+  user            User[]   @relation("GoingAwayFormToUser")
 }
+
 model PasswordResetToken {
   id        Int      @id @default(autoincrement())
   email     String
   createdAt DateTime @default(now())
   expires   DateTime
   token     Int
-  user      User[]     @relation("PasswordResetTokenToUser")
+  user      User[]   @relation("PasswordResetTokenToUser")
 }
 
 model Admin {
@@ -170,7 +180,7 @@ model AdminUser {
   lname    String
   email    String @unique
   password String
-  user     User[]   @relation("AdminUserTokenToUser")
+  user     User[] @relation("AdminUserTokenToUser")
   roles    Role[] @relation("UserRoles")
 }
 
