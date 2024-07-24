@@ -118,8 +118,10 @@ model Faq {
   id          Int    @id @default(autoincrement())
   name        String
   description String
-  sortOrder   Int 
+  sortOrder   Int?
 }
+
+
 
 model Question {
   id            Int      @id @default(autoincrement())
