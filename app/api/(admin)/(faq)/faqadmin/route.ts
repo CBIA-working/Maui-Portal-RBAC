@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
     const faqId = req.headers.get("faqId");
 
     if (!faqId) {
-      const getMessages = await prisma.FAQ.findMany({
+      const getMessages = await prisma.faq.findMany({
         orderBy: {
           id: 'asc', // Ensure the events are ordered by ID in ascending order
         },
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(getMessages);
     }
 
-    const getMessage = await prisma.FAQ.findUnique({
+    const getMessage = await prisma.faq.findUnique({
       where: {
         id: Number(faqId),
       },

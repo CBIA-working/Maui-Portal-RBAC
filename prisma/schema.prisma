@@ -114,10 +114,11 @@ model StudentKeyProgramDate {
   student          User           @relation(fields: [studentId], references: [id])
 }
 
-model FAQ {
+model Faq {
   id          Int    @id @default(autoincrement())
   name        String
   description String
+  sortOrder   Int 
 }
 
 model Question {
