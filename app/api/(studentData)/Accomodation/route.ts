@@ -1,22 +1,24 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
-  const { Id } = await req.json();
+export async function POST(req: NextRequest, res: NextResponse) {
+  const body = await req.json();
+  const { Id } = body;
 
-  // Fetching student accommodations based on the student ID directly
-  const StudentAccomodation = await prisma.studentAccomodation.findMany({
+  const studentAccomodation = await prisma.studentAccomodation.findMany({
     where: {
-      studentId: Id
+      OR: [
+        { studentId: Id },
+        { accomodationId: Id }
+      ]
     },
     include: {
-      accomodation: true, // Correct relation name for accommodation details
+      accomodation: true // Changed from 'culturalEvent' to 'event' based on the model relationship name
     }
   });
 
-  if (StudentAccomodation.length === 0) {
-    return new Response(JSON.stringify({ error: "No accommodations found for this student" }), { status: 404 });
-  }
+  // Map to get only event details from each studentEvent
+  const accomodationDetails = studentAccomodation.map(studentAccomodation => studentAccomodation.accomodation);
 
-  return new Response(JSON.stringify(StudentAccomodation));
+  return NextResponse.json(accomodationDetails);
 }

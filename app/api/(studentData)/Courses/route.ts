@@ -1,21 +1,24 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/prisma";
-import withAuth from "@/lib/withAuth";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-  // Parse the request body
   const body = await req.json();
-  const { userId } = body;
+  const { Id } = body;
 
-  const getMessages = await prisma.course.findMany(
-    {
+  const studentCourse = await prisma.studentCourse.findMany({
     where: {
-      userId: userId
+      OR: [
+        { studentId: Id },
+        { courseId: Id }
+      ]
+    },
+    include: {
+      course: true // Changed from 'culturalEvent' to 'event' based on the model relationship name
     }
-  }
-);
-  const response = await getMessages;
-  return NextResponse.json(response);
-}
+  });
 
-// export const GET = withAuth(handler, 'read', 'CulturalEvent');
+  // Map to get only event details from each studentEvent
+  const courseDetails = studentCourse.map(studentCourse => studentCourse.course);
+
+  return NextResponse.json(courseDetails);
+}
