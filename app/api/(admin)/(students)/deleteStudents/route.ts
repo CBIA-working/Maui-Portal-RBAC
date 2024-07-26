@@ -26,6 +26,10 @@ export async function DELETE(req: NextRequest) {
       where: { studentId: Number(id) },
     });
 
+    // Delete related studentProgram
+    await prisma.studentProgram.deleteMany({
+      where: { studentId: Number(id) },
+    });
 
     // Delete the User
     const user = await prisma.user.delete({
