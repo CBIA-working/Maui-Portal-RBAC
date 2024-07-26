@@ -26,15 +26,41 @@ model User {
   StudentCourse            StudentCourse[]
   StudentEvents            StudentEvents[]
   StudentKeyProgramDate    StudentKeyProgramDate[]
+  StudentProgram           StudentProgram[]
   AdminUsers               AdminUser[]             @relation("AdminUserTokenToUser")
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
+  KeyProgramDate           KeyProgramDate[]        @relation("KeyProgramDateToUser")
+  Program                  Program[]        @relation("ProgramToUser")
   File                     File[]                  @relation("FileToUser")
   GoingAwayForms           GoingAwayForm[]         @relation("GoingAwayFormToUser")
-  KeyProgramDate           KeyProgramDate[]        @relation("KeyProgramDateToUser")
   PasswordResetTokens      PasswordResetToken[]    @relation("PasswordResetTokenToUser")
   Questions                Question[]              @relation("QuestionToUser")
   viewAccomodation         viewAccomodation[]      @relation("viewAccomodationToUser")
+}
+model Program {
+  id                    Int                     @id @default(autoincrement())
+  name                  String
+  batch                 String
+  StudentProgram StudentProgram[]
+  CourseProgram CourseProgram[]
+  user                  User[]                  @relation("ProgramToUser")
+}
+
+model StudentProgram {
+  id               Int            @id @default(autoincrement())
+  studentId        Int
+  ProgramId        Int
+  Program          Program         @relation(fields: [ProgramId], references: [id])
+  student          User            @relation(fields: [studentId], references: [id])
+}
+
+model CourseProgram {
+  id               Int              @id @default(autoincrement())
+  courseId         Int
+  ProgramId        Int
+  Program          Program          @relation(fields: [ProgramId], references: [id])
+  course           Course           @relation(fields: [courseId], references: [id])
 }
 
 model CulturalEvent {
@@ -85,6 +111,7 @@ model Course {
   agreements    String
   keyDates      String
   StudentCourse StudentCourse[]
+  CourseProgram CourseProgram[]
   user          User[]          @relation("CourseToUser")
 }
 
@@ -115,13 +142,11 @@ model StudentKeyProgramDate {
 }
 
 model Faq {
-  id          Int    @id @default(autoincrement())
+  id          Int                 @id @default(autoincrement())
   name        String
   description String
   sortOrder   Int?
 }
-
-
 
 model Question {
   id            Int      @id @default(autoincrement())
