@@ -31,7 +31,7 @@ model User {
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
   KeyProgramDate           KeyProgramDate[]        @relation("KeyProgramDateToUser")
-  Program                  Program[]        @relation("ProgramToUser")
+  Program                  Program[]               @relation("ProgramToUser")
   File                     File[]                  @relation("FileToUser")
   GoingAwayForms           GoingAwayForm[]         @relation("GoingAwayFormToUser")
   PasswordResetTokens      PasswordResetToken[]    @relation("PasswordResetTokenToUser")
@@ -42,13 +42,14 @@ model Program {
   id                    Int                     @id @default(autoincrement())
   name                  String
   batch                 String
-  StudentProgram StudentProgram[]
-  CourseProgram CourseProgram[]
+  archived              Boolean                 @default(false)
+  StudentProgram        StudentProgram[]
+  CourseProgram         CourseProgram[]
   user                  User[]                  @relation("ProgramToUser")
 }
 
 model StudentProgram {
-  id               Int            @id @default(autoincrement())
+  id               Int             @id @default(autoincrement())
   studentId        Int
   ProgramId        Int
   Program          Program         @relation(fields: [ProgramId], references: [id])
