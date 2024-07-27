@@ -11,7 +11,9 @@ export async function POST(request: Request) {
       floor,
       isSingleOccupancy,
       numberOfRoommates = 0, // Default to null if not provided
-      roommateNames = " "       // Default to empty array if not provided
+      roommateNames = " ",      
+      hostfamily=" ",
+      roommateNumber=" "
     } = await request.json();
 
     // Validate required fields
@@ -32,7 +34,9 @@ export async function POST(request: Request) {
         floor,
         isSingleOccupancy,
         numberOfRoommates: numberOfRoommates === null ? undefined : numberOfRoommates, // Set to undefined if null
-        roommateNames: roommateNames.length === 0 ? undefined : roommateNames // Set to undefined if empty
+        roommateNames: roommateNames.length === 0 ? undefined : roommateNames, // Set to undefined if empty
+        hostfamily: hostfamily  === null ? undefined : hostfamily,
+        roommateNumber: roommateNumber === null ? undefined : roommateNumber
       },
     });
 

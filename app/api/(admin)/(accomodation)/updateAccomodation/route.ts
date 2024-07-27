@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, roomNumber,buildingName,floor, isSingleOccupancy,numberOfRoommates,roommateNames,userId } = await req.json();
+    const { id, roomNumber,buildingName,floor, isSingleOccupancy,numberOfRoommates,roommateNames,hostfamily,roommateNumber,userId } = await req.json();
 
     if (!id) {
       return NextResponse.json({ error: 'ID is required.' }, { status: 400 });
@@ -18,6 +18,8 @@ export async function POST(req: NextRequest) {
       ...(isSingleOccupancy && { isSingleOccupancy }),
       ...(numberOfRoommates && { numberOfRoommates }),
       ...(roommateNames && { roommateNames }),
+      ...(hostfamily && { hostfamily }),
+      ...(roommateNumber && { roommateNumber }),
       ...(userId && { userId })
     };
 

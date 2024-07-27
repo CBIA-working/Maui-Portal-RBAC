@@ -90,6 +90,8 @@ model viewAccomodation {
   isSingleOccupancy   Boolean
   numberOfRoommates   Int
   roommateNames       String
+  roommateNumber      String?
+  hostfamily          String?
   StudentAccomodation StudentAccomodation[]
   user                User[]                @relation("viewAccomodationToUser")
 }
