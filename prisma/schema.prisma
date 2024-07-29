@@ -92,6 +92,9 @@ model viewAccomodation {
   roommateNames       String
   roommateNumber      String?
   hostfamily          String?
+  agreement1          Boolean               @default(false)
+  agreement2          Boolean               @default(false)
+  agreement3          Boolean               @default(false)
   StudentAccomodation StudentAccomodation[]
   user                User[]                @relation("viewAccomodationToUser")
 }
