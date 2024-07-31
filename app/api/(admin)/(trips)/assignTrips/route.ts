@@ -6,22 +6,22 @@ import prisma from '@/lib/prisma';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { studentId, eventId } = body;
+    const { studentId, tripId } = body;
 
-    if (!studentId || !eventId) {
-      return NextResponse.json({ message: 'Student ID and Event ID are required' }, { status: 400 });
+    if (!studentId || !tripId) {
+      return NextResponse.json({ message: 'Student ID and Trip ID are required' }, { status: 400 });
     }
 
-    const studentEvent = await prisma.studentEvents.create({
+    const studentTrip = await prisma.studentTrip.create({
       data: {
         studentId,
-        eventId,
+        tripId,
       },
     });
 
-    return NextResponse.json(studentEvent, { status: 201 });
+    return NextResponse.json(studentTrip, { status: 201 });
   } catch (error) {
-    console.error('Error assigning student to event:', error);
+    console.error('Error assigning student to trip:', error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

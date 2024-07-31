@@ -5,41 +5,41 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
   const { Id, type } = body;
 
-  let studentEvents;
+  let studentTrips;
 
   if (type == "student") {
-    studentEvents = await prisma.studentEvents.findMany({
+    studentTrips = await prisma.studentTrip.findMany({
       where: {
         studentId: Id
       }
     });
-  } else if (type == "event") {
-    studentEvents = await prisma.studentEvents.findMany({
+  } else if (type == "trip") {
+    studentTrips = await prisma.studentTrip.findMany({
       where: {
-        eventId: Id
+        tripId: Id
       }
     });
   } else {
     return NextResponse.json({ error: "Invalid type" }, { status: 400 });
   }
 
-  const enhancedStudentEvents = await Promise.all(
-    studentEvents.map(async (studentEvent) => {
-      const eventDetails = await prisma.culturalEvent.findUnique({
-        where: { id: studentEvent.eventId }
+  const enhancedStudentTrips = await Promise.all(
+    studentTrips.map(async (studentTrips) => {
+      const tripDetails = await prisma.trip.findUnique({
+        where: { id: studentTrips.tripId }
       });
 
       const studentDetails = await prisma.user.findUnique({
-        where: { id: studentEvent.studentId }
+        where: { id: studentTrips.studentId }
       });
 
       return {
-        ...studentEvent,
-        eventDetails,
+        ...studentTrips,
+        tripDetails,
         studentDetails
       };
     })
   );
 
-  return NextResponse.json(enhancedStudentEvents);
+  return NextResponse.json(enhancedStudentTrips);
 }

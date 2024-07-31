@@ -5,24 +5,29 @@ const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
-    const { eventName, date, description, signedUp } = await request.json();
+    const { TripName,Location,DepartureDate,ReturnDate,FullName,StudentId,PhoneNumber,Purpose,GoingFormFilled  } = await request.json();
 
-    if (!eventName || !date || description === undefined || signedUp === undefined) {
+    if (!TripName || !Location  || !DepartureDate || !ReturnDate || !FullName || !StudentId  || !PhoneNumber || !Purpose || !GoingFormFilled === undefined) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const newEvent = await prisma.culturalEvent.create({
+    const newtrip= await prisma.trip.create({
       data: {
-        eventName,
-        date,
-        description,
-        signedUp,
+        TripName,
+        Location,
+        DepartureDate,
+        ReturnDate,
+        FullName,
+        StudentId,
+        PhoneNumber,
+        Purpose,
+        GoingFormFilled,
       },
     });
 
-    return NextResponse.json(newEvent, { status: 201 });
+    return NextResponse.json(newtrip, { status: 201 });
   } catch (error) {
-    console.error('Error creating event:', error);
+    console.error('Error creating trip:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
