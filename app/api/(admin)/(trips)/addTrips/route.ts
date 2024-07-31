@@ -15,8 +15,8 @@ export async function POST(request: Request) {
       data: {
         TripName,
         Location,
-        DepartureDate,
-        ReturnDate,
+        DepartureDate:new Date(DepartureDate),
+        ReturnDate:new Date(ReturnDate),
         FullName,
         StudentId,
         PhoneNumber,

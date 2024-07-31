@@ -165,8 +165,8 @@ model Trip {
   DepartureDate   DateTime
   ReturnDate      DateTime
   FullName        String
-  StudentId       String
-  PhoneNumber     String
+  StudentId       Int
+  PhoneNumber     Int
   Purpose         String
   GoingFormFilled Boolean
   StudentTrip     StudentTrip[]
