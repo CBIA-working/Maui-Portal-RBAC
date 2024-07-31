@@ -1,31 +1,27 @@
-import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
 
-const prisma = new PrismaClient();
-
+// Define the DELETE handler
 export async function DELETE(req: NextRequest) {
   try {
-    const { id } = await req.json();
+    const body = await req.json();
+    const { studentId, tripId } = body;
 
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required.' }, { status: 400 });
+    if (!studentId || !tripId) {
+      return NextResponse.json({ message: 'Student ID and trip ID are required' }, { status: 400 });
     }
 
-    // Delete related Studenttrip first
+    // Delete the StudentAccomodation record
     await prisma.studentTrip.deleteMany({
-      where: { tripId: Number(id) },
+      where: {
+        studentId: Number(studentId),
+        tripId: Number(tripId),
+      },
     });
 
-    // Delete the trip
-    const trip = await prisma.trip.delete({
-      where: { id: Number(id) },
-    });
-
-    console.log('trip deleted successfully:', trip);
-
-    return NextResponse.json({ message: 'trip deleted successfully.' }, { status: 200 });
+    return NextResponse.json({ message: 'studentTrip deleted successfully' }, { status: 200 });
   } catch (error) {
-    console.error('Error deleting trip:', error);
-    return NextResponse.json({ error: 'Error deleting trip.' }, { status: 500 });
+    console.error('Error deleting studentTrip:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }
