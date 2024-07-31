@@ -27,17 +27,21 @@ model User {
   StudentEvents            StudentEvents[]
   StudentKeyProgramDate    StudentKeyProgramDate[]
   StudentProgram           StudentProgram[]
+  StudentTrip              StudentTrip[]
   AdminUsers               AdminUser[]             @relation("AdminUserTokenToUser")
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
   KeyProgramDate           KeyProgramDate[]        @relation("KeyProgramDateToUser")
   Program                  Program[]               @relation("ProgramToUser")
+  viewAccomodation         viewAccomodation[]      @relation("viewAccomodationToUser")
+  trip                     Trip[]                  @relation("TripToUser")
+
   File                     File[]                  @relation("FileToUser")
   GoingAwayForms           GoingAwayForm[]         @relation("GoingAwayFormToUser")
   PasswordResetTokens      PasswordResetToken[]    @relation("PasswordResetTokenToUser")
   Questions                Question[]              @relation("QuestionToUser")
-  viewAccomodation         viewAccomodation[]      @relation("viewAccomodationToUser")
 }
+
 model Program {
   id                    Int                     @id @default(autoincrement())
   name                  String
@@ -152,6 +156,29 @@ model Faq {
   name        String
   description String
   order   Int?
+}
+
+model Trip {
+  id              Int      @id @default(autoincrement())
+  TripName        String
+  Location        String
+  DepartureDate   DateTime
+  ReturnDate      DateTime
+  FullName        String
+  StudentId       String
+  PhoneNumber     String
+  Purpose         String
+  GoingFormFilled Boolean
+  StudentTrip     StudentTrip[]
+  user            User[]   @relation("TripToUser")
+}
+
+model StudentTrip {
+  id               Int            @id @default(autoincrement())
+  studentId        Int
+  tripId           Int
+  trip             Trip           @relation(fields: [tripId], references: [id])
+  student          User           @relation(fields: [studentId], references: [id])
 }
 
 model Question {
