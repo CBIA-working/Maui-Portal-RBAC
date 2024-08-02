@@ -11,11 +11,52 @@ export async function POST(req: NextRequest) {
 
     const { month } = body;
 
-    if (!month || typeof month !== 'number') {
-      return NextResponse.json({ error: 'Invalid month number.' }, { status: 400 });
+    // Validate month
+    if (!month || typeof month !== 'number' || month < 1 || month > 12) {
+      return NextResponse.json({ error: 'Invalid month number. It must be between 1 and 12.' }, { status: 400 });
     }
 
     const currentYear = new Date().getFullYear();
+
+    // Helper function to create valid date ranges
+    const getDateRange = (year: number, month: number) => {
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 1); // first day of the next month
+      return { startDate, endDate };
+    };
+
+    // Fetch current month data
+    const { startDate: currentMonthStart, endDate: currentMonthEnd } = getDateRange(currentYear, month);
+    const currentMonthDates = await prisma.keyProgramDate.findMany({
+      where: {
+        date: {
+          gte: currentMonthStart,
+          lt: currentMonthEnd,
+        },
+      },
+    });
+
+    // Fetch previous month data
+    const { startDate: prevMonthStart, endDate: prevMonthEnd } = getDateRange(currentYear, month - 1);
+    const prevMonthDates = await prisma.keyProgramDate.findMany({
+      where: {
+        date: {
+          gte: prevMonthStart,
+          lt: prevMonthEnd,
+        },
+      },
+    });
+
+    // Fetch next month data
+    const { startDate: nextMonthStart, endDate: nextMonthEnd } = getDateRange(currentYear, month + 1);
+    const nextMonthDates = await prisma.keyProgramDate.findMany({
+      where: {
+        date: {
+          gte: nextMonthStart,
+          lt: nextMonthEnd,
+        },
+      },
+    });
 
     // Function to transform the date object to include only hh:mm
     const transformDates = (dates: any[]) => {
@@ -24,36 +65,6 @@ export async function POST(req: NextRequest) {
         time: date.time.slice(0, 5), // Extracting hh:mm part
       }));
     };
-
-    // Your logic to fetch data based on the month
-    const currentMonthDates = await prisma.keyProgramDate.findMany({
-      where: {
-        date: {
-          gte: new Date(`${currentYear}-${month}-01`),
-          lt: new Date(`${currentYear}-${month + 1}-01`),
-        },
-      },
-    });
-
-    // Fetch previous month data
-    const prevMonthDates = await prisma.keyProgramDate.findMany({
-      where: {
-        date: {
-          gte: new Date(`${currentYear}-${month - 1}-01`),
-          lt: new Date(`${currentYear}-${month}-01`),
-        },
-      },
-    });
-
-    // Fetch next month data
-    const nextMonthDates = await prisma.keyProgramDate.findMany({
-      where: {
-        date: {
-          gte: new Date(`${currentYear}-${month + 1}-01`),
-          lt: new Date(`${currentYear}-${month + 2}-01`),
-        },
-      },
-    });
 
     return NextResponse.json({
       currentMonthDates: transformDates(currentMonthDates),
