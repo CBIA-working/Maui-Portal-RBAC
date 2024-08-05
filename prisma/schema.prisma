@@ -166,12 +166,13 @@ model Trip {
   ReturnDate      DateTime
   FullName        String
   StudentId       Int
-  PhoneNumber     Int
+  PhoneNumber     String
   Purpose         String
   GoingFormFilled Boolean
   StudentTrip     StudentTrip[]
   user            User[]   @relation("TripToUser")
 }
+
 
 model StudentTrip {
   id               Int            @id @default(autoincrement())
@@ -197,6 +198,13 @@ model Marker {
   position  Json
   label     String
   info      String
+}
+
+model OrientationFile {
+  id             Int     @id @default(autoincrement())
+  Name           String
+  Description    String
+  OrientationPdf String
 }
 
 model GoingAwayForm {
