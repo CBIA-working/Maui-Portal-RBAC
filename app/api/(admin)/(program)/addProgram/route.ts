@@ -5,15 +5,16 @@ const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
-    const { name,batch } = await request.json();
+    const { name,fullForm,batch } = await request.json();
 
-    if (!name || !batch ) {
+    if (!name || !fullForm || !batch ) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const newProgram = await prisma.program.create({
       data: {
         name,
+        fullForm,
         batch
       },
     });

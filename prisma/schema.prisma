@@ -45,6 +45,7 @@ model User {
 model Program {
   id                    Int                     @id @default(autoincrement())
   name                  String
+  fullForm              String
   batch                 String
   archived              Boolean                 @default(false)
   StudentProgram        StudentProgram[]

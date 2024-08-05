@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     const newProgram = await prisma.program.create({
       data: {
         name: `${program.name} - Copy`,
+        fullForm:program.fullForm,
         batch: program.batch
       }
     });

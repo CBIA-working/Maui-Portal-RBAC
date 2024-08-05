@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, name, batch } = await req.json();
+    const { id, name,fullForm, batch } = await req.json();
 
     if (!id) {
       return NextResponse.json({ error: 'ID is required.' }, { status: 400 });
@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
 
     const updatedProgramData = {
       ...(name && { name }),
+      ...(fullForm && {fullForm}),
       ...(batch && { batch }),
     };
 
