@@ -11,25 +11,19 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     console.log('FormData:', formData); // Log formData
 
-    const image = formData.get("image") as File | undefined;
+    const files = formData.get("files") as File | undefined;
 
-    if (!image) {
+    if (!files) {
       return NextResponse.json(
         { error: "No file uploaded." },
         { status: 400 }
       );
     }
 
-    console.log('Image File:', image); // Log the image file details
+    console.log('files File:', files); // Log the files file details
 
-    const buffer = Buffer.from(await image.arrayBuffer());
-    const relativeUploadDir = `/uploads/${new Date(Date.now())
-      .toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-      .replace(/\//g, "-")}`;
+    const buffer = Buffer.from(await files.arrayBuffer());
+    const relativeUploadDir = `/orientation`;
 
     const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
@@ -52,11 +46,8 @@ export async function POST(req: NextRequest) {
 
 // ...
 try {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const filename = `${image.name.replace(
-      /\.[^/.]+$/,
-      ""
-    )}-${uniqueSuffix}.${mime.getExtension(image.type)}`;
+    const filename = files.name;
+
   
     // Prepare file path
     const filePath = `${uploadDir}/${filename}`;
@@ -75,7 +66,7 @@ try {
       data: {
         pageId: "1", // Assuming you have a valid pageId
         file: fileUrl,
-        name: image.name, // Original name of the file
+        name: files.name, // Original name of the file
         path: filePath, // Full path where the file is stored
         user: {
           connect: { id: userId } // Connect to an existing user
