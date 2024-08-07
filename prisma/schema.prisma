@@ -28,6 +28,7 @@ model User {
   StudentKeyProgramDate    StudentKeyProgramDate[]
   StudentProgram           StudentProgram[]
   StudentTrip              StudentTrip[]
+  StudentLibrary           StudentLibrary[]
   AdminUsers               AdminUser[]             @relation("AdminUserTokenToUser")
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
@@ -35,8 +36,9 @@ model User {
   Program                  Program[]               @relation("ProgramToUser")
   viewAccomodation         viewAccomodation[]      @relation("viewAccomodationToUser")
   trip                     Trip[]                  @relation("TripToUser")
-
   File                     File[]                  @relation("FileToUser")
+  Library                  Library[]               @relation("LibraryToUser")
+  Book                     Book[]                  @relation("BookToUser")
   GoingAwayForms           GoingAwayForm[]         @relation("GoingAwayFormToUser")
   PasswordResetTokens      PasswordResetToken[]    @relation("PasswordResetTokenToUser")
   Questions                Question[]              @relation("QuestionToUser")
@@ -50,6 +52,7 @@ model Program {
   archived              Boolean                 @default(false)
   StudentProgram        StudentProgram[]
   CourseProgram         CourseProgram[]
+  LibraryProgram        LibraryProgram[]
   user                  User[]                  @relation("ProgramToUser")
 }
 
@@ -183,17 +186,6 @@ model StudentTrip {
   student          User           @relation(fields: [studentId], references: [id])
 }
 
-
-model Question {
-  id            Int      @id @default(autoincrement())
-  StudentId     Int
-  QuestionAsked String
-  Date          DateTime
-  Answer        String?
-  Solved        Boolean
-  user          User[]   @relation("QuestionToUser")
-}
-
 model Marker {
   id        Int     @id @default(autoincrement())
   position  Json
@@ -206,6 +198,65 @@ model OrientationFile {
   Name           String
   Description    String
   OrientationPdf String
+
+}
+
+model File {
+  id        String   @id @default(cuid())
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pageId    String?
+  file      String?
+  user      User[]   @relation("FileToUser")
+}
+
+
+model Library {
+  id             Int     @id @default(autoincrement())
+  Name           String
+  Description    String
+  Status         String
+  LibraryPdf     String
+  StudentLibrary StudentLibrary[]
+  LibraryProgram LibraryProgram[]
+  user           User[]   @relation("LibraryToUser")
+}
+
+model Book {
+  id        String   @id @default(cuid())
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  pageId    String?
+  file      String?
+  user      User[]   @relation("BookToUser")
+}
+
+model StudentLibrary {
+  id               Int            @id @default(autoincrement())
+  studentId        Int
+  libraryId        Int
+  Library          Library        @relation(fields: [libraryId], references: [id])
+  student          User           @relation(fields: [studentId], references: [id])
+}
+
+model LibraryProgram {
+  id               Int            @id @default(autoincrement())
+  libraryId        Int
+  programId        Int
+  Library          Library        @relation(fields: [libraryId], references: [id])
+  program          Program           @relation(fields: [programId], references: [id])
+}
+
+model Question {
+  id            Int      @id @default(autoincrement())
+  StudentId     Int
+  QuestionAsked String
+  Date          DateTime
+  Answer        String?
+  Solved        Boolean
+  user          User[]   @relation("QuestionToUser")
 }
 
 model GoingAwayForm {
@@ -262,12 +313,4 @@ model AdminUser {
   roles    Role[] @relation("UserRoles")
 }
 
-model File {
-  id        String   @id @default(cuid())
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  pageId    String?
-  file      String?
-  user      User[]   @relation("FileToUser")
-}
+
