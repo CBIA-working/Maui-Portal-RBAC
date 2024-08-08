@@ -12,15 +12,15 @@ export async function DELETE(req: NextRequest) {
     }
 
     // Delete the orientation
-    const orientation = await prisma.orientationFile.delete({
+    const library = await prisma.library.delete({
       where: { id: Number(id) },
     });
 
-    console.log('orientation deleted successfully:', orientation);
+    console.log('library deleted successfully:', library);
 
-    return NextResponse.json({ message: 'orientation deleted successfully.' }, { status: 200 });
+    return NextResponse.json({ message: 'library deleted successfully.' }, { status: 200 });
   } catch (error) {
-    console.error('Error deleting orientation:', error);
-    return NextResponse.json({ error: 'Error deleting orientation.' }, { status: 500 });
+    console.error('Error deleting library:', error);
+    return NextResponse.json({ error: 'Error deleting library.' }, { status: 500 });
   }
 }

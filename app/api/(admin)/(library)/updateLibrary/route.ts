@@ -5,28 +5,29 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, Name, Description, OrientationPdf } = await req.json();
+    const { id,Name, Description, Status, LibraryPdf } = await req.json();
 
     if (!id) {
       return NextResponse.json({ error: 'ID is required.' }, { status: 400 });
     }
 
-    const updatedOrientationFileData = {
+    const updatedlibraryData = {
       ...(Name && { Name }),
       ...(Description && { Description }),
-      ...(OrientationPdf && { OrientationPdf }),
+      ...(Status && { Status }),
+      ...(LibraryPdf && { LibraryPdf }),
     };
 
-    const orientationFile = await prisma.orientationFile.update({
+    const library = await prisma.library.update({
       where: { id: Number(id) },
-      data: updatedOrientationFileData,
+      data: updatedlibraryData,
     });
 
-    console.log('orientation File updated successfully:', orientationFile);
+    console.log('Library updated successfully:', library);
 
-    return NextResponse.json(orientationFile, { status: 200 });
+    return NextResponse.json(library, { status: 200 });
   } catch (error) {
-    console.error('Error updating orientation File:', error);
-    return NextResponse.json({ error: 'Error updating orientation File.' }, { status: 500 });
+    console.error('Error updating library:', error);
+    return NextResponse.json({ error: 'Error updating library.' }, { status: 500 });
   }
 }

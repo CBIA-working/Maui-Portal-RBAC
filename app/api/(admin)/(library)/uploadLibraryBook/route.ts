@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     console.log('files File:', files); // Log the files file details
 
     const buffer = Buffer.from(await files.arrayBuffer());
-    const relativeUploadDir = `/orientation`;
+    const relativeUploadDir = `/library`;
 
     const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
