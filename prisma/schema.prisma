@@ -29,6 +29,7 @@ model User {
   StudentProgram           StudentProgram[]
   StudentTrip              StudentTrip[]
   StudentLibrary           StudentLibrary[]
+  StudentTasks             StudentTasks[]
   AdminUsers               AdminUser[]             @relation("AdminUserTokenToUser")
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
@@ -39,6 +40,7 @@ model User {
   File                     File[]                  @relation("FileToUser")
   Library                  Library[]               @relation("LibraryToUser")
   Book                     Book[]                  @relation("BookToUser")
+  Tasks                    Tasks[]                 @relation("TasksToUser")
   GoingAwayForms           GoingAwayForm[]         @relation("GoingAwayFormToUser")
   PasswordResetTokens      PasswordResetToken[]    @relation("PasswordResetTokenToUser")
   Questions                Question[]              @relation("QuestionToUser")
@@ -224,7 +226,7 @@ model Library {
 }
 
 model Book {
-  id        String   @id @default(cuid())
+  id        Int   @id @default(autoincrement())
   name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -246,7 +248,26 @@ model LibraryProgram {
   libraryId        Int
   programId        Int
   Library          Library        @relation(fields: [libraryId], references: [id])
-  program          Program           @relation(fields: [programId], references: [id])
+  program          Program        @relation(fields: [programId], references: [id])
+}
+
+model Tasks{
+  id              Int            @id @default(autoincrement())
+  name            String
+  date            DateTime
+  status          Boolean
+  FullName        String
+  StudentId       Int
+  StudentTasks    StudentTasks[]
+  user            User[]   @relation("TasksToUser")
+}
+
+model StudentTasks {
+  id               Int            @id @default(autoincrement())
+  studentId        Int
+  taskId           Int
+  task             Tasks           @relation(fields: [taskId], references: [id])
+  student          User           @relation(fields: [studentId], references: [id])
 }
 
 model Question {
