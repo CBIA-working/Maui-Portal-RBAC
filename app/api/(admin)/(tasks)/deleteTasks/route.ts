@@ -11,19 +11,20 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'ID is required.' }, { status: 400 });
     }
 
-    await prisma.studentTrip.deleteMany({
-      where: { tripId: Number(id) },
+    await prisma.studentTasks.deleteMany({
+      where: { taskId: Number(id) },
     });
 
-    const trip = await prisma.trip.delete({
+
+    const task = await prisma.tasks.delete({
       where: { id: Number(id) },
     });
 
-    console.log('trip deleted successfully:', trip);
+    console.log('tasks deleted successfully:', task);
 
-    return NextResponse.json({ message: 'trip deleted successfully.' }, { status: 200 });
+    return NextResponse.json({ message: 'tasks deleted successfully.' }, { status: 200 });
   } catch (error) {
-    console.error('Error deleting trip:', error);
-    return NextResponse.json({ error: 'Error deleting trip.' }, { status: 500 });
+    console.error('Error deleting tasks:', error);
+    return NextResponse.json({ error: 'Error deleting tasks.' }, { status: 500 });
   }
 }
