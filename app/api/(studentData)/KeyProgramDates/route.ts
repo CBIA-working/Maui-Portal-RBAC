@@ -1,58 +1,78 @@
-import withAuth from "@/lib/withAuth";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse, NextRequest } from 'next/server';
+import prisma from '@/lib/prisma';
 
-async function handler(req: Request) {
-  const res = {
-    "2024-05-21T00:00:00Z": [
-      {
-        "Name": "Orientation Day",
-        "Description": "Welcome new students to campus!"
-      },
-      {
-        "Name": "Club Fair",
-        "Description": "Explore various student clubs and organizations."
-      }
-    ],
-    "2024-05-26T00:00:00Z": [
-      {
-        "Name": "Field Trip to Museum",
-        "Description": "Visit the local museum for an educational tour."
-      },
-      {
-        "Name": "Career Workshop",
-        "Description": "Learn about career opportunities and resume building."
-      }
-    ],
-    "2024-04-26T00:00:00Z": [
-      {
-        "Name": "Startup Pitch Competition",
-        "Description": "Present your business ideas in front of a panel of judges."
-      }
-    ],
-    "2024-04-30T00:00:00Z": [
-      {
-        "Name": "Leadership Seminar",
-        "Description": "Enhance your leadership skills with industry experts."
-      },
-      {
-        "Name": "Networking Mixer",
-        "Description": "Connect with alumni and industry professionals."
-      }
-    ],
-    "2024-05-12T00:00:00Z": [
-      {
-        "Name": "Business Ethics Workshop",
-        "Description": "Discuss ethical dilemmas in business."
-      }
-    ],
-    "2024-05-20T00:00:00Z": [
-      {
-        "Name": "Trip",
-        "Description": "Trip details"
-      }
-    ]
-  }
-
-  return NextResponse.json(res);
+interface RequestBody {
+  month: number;
 }
-export const GET= withAuth(handler, 'read', 'KeyProgramDates');
+
+export async function POST(req: NextRequest) {
+  try {
+    const body: RequestBody = await req.json();
+
+    const { month } = body;
+
+    // Validate month
+    if (!month || typeof month !== 'number' || month < 1 || month > 12) {
+      return NextResponse.json({ error: 'Invalid month number. It must be between 1 and 12.' }, { status: 400 });
+    }
+
+    const currentYear = new Date().getFullYear();
+
+    // Helper function to create valid date ranges
+    const getDateRange = (year: number, month: number) => {
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 1); // first day of the next month
+      return { startDate, endDate };
+    };
+
+    // Fetch current month data
+    const { startDate: currentMonthStart, endDate: currentMonthEnd } = getDateRange(currentYear, month);
+    const currentMonthDates = await prisma.keyProgramDate.findMany({
+      where: {
+        date: {
+          gte: currentMonthStart,
+          lt: currentMonthEnd,
+        },
+      },
+    });
+
+    // Fetch previous month data
+    const { startDate: prevMonthStart, endDate: prevMonthEnd } = getDateRange(currentYear, month - 1);
+    const prevMonthDates = await prisma.keyProgramDate.findMany({
+      where: {
+        date: {
+          gte: prevMonthStart,
+          lt: prevMonthEnd,
+        },
+      },
+    });
+
+    // Fetch next month data
+    const { startDate: nextMonthStart, endDate: nextMonthEnd } = getDateRange(currentYear, month + 1);
+    const nextMonthDates = await prisma.keyProgramDate.findMany({
+      where: {
+        date: {
+          gte: nextMonthStart,
+          lt: nextMonthEnd,
+        },
+      },
+    });
+
+    // Function to transform the date object to include only hh:mm
+    const transformDates = (dates: any[]) => {
+      return dates.map(date => ({
+        ...date,
+        time: date.time.slice(0, 5), // Extracting hh:mm part
+      }));
+    };
+
+    return NextResponse.json({
+      currentMonthDates: transformDates(currentMonthDates),
+      prevMonthDates: transformDates(prevMonthDates),
+      nextMonthDates: transformDates(nextMonthDates),
+    });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+  }
+}

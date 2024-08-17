@@ -22,6 +22,7 @@ model User {
   emergencyContactNumber   String
   emergencyContactRelation String
   imageUrl                 String?
+  token                    String?
   StudentAccomodation      StudentAccomodation[]
   StudentCourse            StudentCourse[]
   StudentEvents            StudentEvents[]
