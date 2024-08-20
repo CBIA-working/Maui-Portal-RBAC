@@ -7,6 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model Admin {
+  id                       Int                     @id @default(autoincrement())
+  fname                    String
+  lname                    String
+  email                    String                  @unique
+  password                 String
+  dob                      String
+  address                  String
+  gender                   String
+  bloodGroup               String
+  dietaryPreference        String
+  emergencyContactName     String
+  emergencyContactNumber   String
+  emergencyContactRelation String
+  imageUrl                 String?
+  token                    String?
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  roleName    String
+  permissions Permission[]
+}
+
+model Permission {
+  id     Int    @id @default(autoincrement())
+  type   String
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId Int
+}
+
 model User {
   id                       Int                     @id @default(autoincrement())
   fname                    String
@@ -31,7 +63,6 @@ model User {
   StudentTrip              StudentTrip[]
   StudentLibrary           StudentLibrary[]
   StudentTasks             StudentTasks[]
-  AdminUsers               AdminUser[]             @relation("AdminUserTokenToUser")
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
   KeyProgramDate           KeyProgramDate[]        @relation("KeyProgramDateToUser")
@@ -304,35 +335,5 @@ model PasswordResetToken {
   user      User[]   @relation("PasswordResetTokenToUser")
 }
 
-model Admin {
-  id       Int    @id @default(autoincrement())
-  email    String @unique
-  password String
-}
-
-model Role {
-  id          Int          @id @default(autoincrement())
-  name        String
-  permissions Permission[]
-  users       AdminUser[]  @relation("UserRoles")
-}
-
-model Permission {
-  id      Int    @id @default(autoincrement())
-  action  String
-  subject String
-  roleId  Int
-  role    Role   @relation(fields: [roleId], references: [id])
-}
-
-model AdminUser {
-  id       Int    @id @default(autoincrement())
-  fname    String
-  lname    String
-  email    String @unique
-  password String
-  user     User[] @relation("AdminUserTokenToUser")
-  roles    Role[] @relation("UserRoles")
-}
 
 
