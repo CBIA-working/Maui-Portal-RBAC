@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// GET method to fetch all roles
 export async function GET() {
   try {
     const roles = await prisma.role.findMany({
@@ -15,6 +14,9 @@ export async function GET() {
     return NextResponse.json(roles);
   } catch (error) {
     console.error('Error fetching roles:', error);
-    return NextResponse.json({ error: 'Error fetching roles' }, { status: 500 });
+    if (error instanceof Error) {
+      return NextResponse.json({ error: 'Error fetching roles', message: error.message }, { status: 500 });
+    }
+    return NextResponse.json({ error: 'Error fetching roles', message: 'Unknown error' }, { status: 500 });
   }
 }

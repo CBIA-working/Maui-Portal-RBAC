@@ -9,9 +9,9 @@ export async function POST(req: NextRequest) {
     console.log("Received request body:", body); // Log the request body to inspect it
     const { roleName, permissions } = body;
 
-    // Ensure permissions is an array
-    if (!Array.isArray(permissions)) {
-      return NextResponse.json({ error: "Permissions should be an array" }, { status: 400 });
+    // Check for proper structure of permissions
+    if (typeof permissions !== 'object' || !permissions.read || !permissions.write || !permissions.both) {
+      return NextResponse.json({ error: "Invalid permissions structure" }, { status: 400 });
     }
 
     // Create a new role with associated permissions
@@ -19,9 +19,11 @@ export async function POST(req: NextRequest) {
       data: {
         roleName,
         permissions: {
-          create: permissions.map((permission: string) => ({
-            type: permission,
-          })),
+          create: [
+            ...permissions.read.map((pageName: string) => ({ type: 'read', pageName })),
+            ...permissions.write.map((pageName: string) => ({ type: 'write', pageName })),
+            ...permissions.both.map((pageName: string) => ({ type: 'both', pageName })),
+          ],
         },
       },
     });
