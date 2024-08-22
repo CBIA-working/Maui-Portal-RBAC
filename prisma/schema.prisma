@@ -23,12 +23,24 @@ model Admin {
   imageUrl                 String?
   lname                    String
   token                    String?
+  AdminRole                AdminRole[]
+  Role                     Role[]           @relation("RoleToAdmin")
 }
 
 model Role {
   id          Int          @id @default(autoincrement())
   roleName    String       @unique
   permissions Permission[]
+  AdminRole   AdminRole[]
+  Admin       Admin[]           @relation("RoleToAdmin")
+}
+
+model AdminRole {
+  id        Int     @id @default(autoincrement())
+  RoleId    Int
+  AdminId   Int
+  Role      Role @relation(fields: [RoleId], references: [id])
+  Admin     Admin    @relation(fields: [AdminId], references: [id])
 }
 
 model Permission {
@@ -38,6 +50,7 @@ model Permission {
   pageName String
   role     Role   @relation(fields: [roleId], references: [id])
 }
+
 
 model User {
   id                       Int                     @id @default(autoincrement())
