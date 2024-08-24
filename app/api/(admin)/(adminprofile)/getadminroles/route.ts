@@ -11,6 +11,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
                         permissions: true
                     }
                 }
+            },
+            orderBy: {
+                id: 'asc'  // Ordering by 'roleId' in ascending order
             }
         });
 
