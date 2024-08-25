@@ -6,6 +6,9 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const roles = await prisma.role.findMany({
+      orderBy: {
+        id: 'asc'  // Order by 'id' in ascending order
+      },
       include: {
         permissions: true,
       },
