@@ -23,6 +23,7 @@ model Admin {
   imageUrl                 String?
   lname                    String
   token                    String?
+  Message                  Message[]
   AdminStudent             AdminStudent[]
   AdminRole                AdminRole[]
   Role                     Role[]           @relation("RoleToAdmin")
@@ -34,6 +35,17 @@ model AdminStudent {
   AdminId   Int
   Admin     Admin @relation(fields: [AdminId], references: [id])
   student   User    @relation(fields: [studentId], references: [id])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  studentId Int
+  adminId   Int
+  student   User     @relation(fields: [studentId], references: [id])
+  admin     Admin    @relation(fields: [adminId], references: [id])
+  sender    String   // This field indicates if the sender is 'student' or 'admin'
 }
 
 model Role {
@@ -86,6 +98,7 @@ model User {
   StudentTasks             StudentTasks[]
   StudentTrip              StudentTrip[]
   AdminStudent             AdminStudent[]
+  Message                  Message[]
   Book                     Book[]                  @relation("BookToUser")
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
