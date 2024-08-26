@@ -23,8 +23,17 @@ model Admin {
   imageUrl                 String?
   lname                    String
   token                    String?
+  AdminStudent             AdminStudent[]
   AdminRole                AdminRole[]
   Role                     Role[]           @relation("RoleToAdmin")
+}
+
+model AdminStudent {
+  id        Int     @id @default(autoincrement())
+  studentId Int
+  AdminId   Int
+  Admin     Admin @relation(fields: [AdminId], references: [id])
+  student   User    @relation(fields: [studentId], references: [id])
 }
 
 model Role {
@@ -76,6 +85,7 @@ model User {
   StudentProgram           StudentProgram[]
   StudentTasks             StudentTasks[]
   StudentTrip              StudentTrip[]
+  AdminStudent             AdminStudent[]
   Book                     Book[]                  @relation("BookToUser")
   Course                   Course[]                @relation("CourseToUser")
   CulturalEvents           CulturalEvent[]         @relation("CulturalEventToUser")
