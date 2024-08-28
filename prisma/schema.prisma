@@ -45,7 +45,8 @@ model Message {
   adminId   Int
   student   User     @relation(fields: [studentId], references: [id])
   admin     Admin    @relation(fields: [adminId], references: [id])
-  sender    String   // This field indicates if the sender is 'student' or 'admin'
+  sender    String   
+  seen      Boolean  @default(false)
 }
 
 model Role {

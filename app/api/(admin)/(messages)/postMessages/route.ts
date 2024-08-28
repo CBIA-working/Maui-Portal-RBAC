@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: NextRequest) {
   try {
-    const { content, studentId, adminId, sender } = await req.json();
+    const { content, studentId, adminId, sender,seen } = await req.json();
 
     const message = await prisma.message.create({
       data: {
@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
         studentId,
         adminId,
         sender,
+        seen,
       },
     });
 

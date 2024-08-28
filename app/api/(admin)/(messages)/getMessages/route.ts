@@ -16,9 +16,11 @@ export async function GET(req: NextRequest) {
         createdAt: 'asc',
       },
       select: {
+        id:true,
         content: true,
         createdAt: true,
         sender: true,
+        seen:true
       },
     });
 
