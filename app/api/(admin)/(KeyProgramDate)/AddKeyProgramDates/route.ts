@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const config = {
+export default {
   api: {
-    bodyParser: true, // Enable the default body parser since you are parsing JSON
+    bodyParser: true,
   },
 };
